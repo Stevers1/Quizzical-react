@@ -1,0 +1,29 @@
+.question_container {
+  display: flex;
+  flex-direction: column;
+	animation: slide-in-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+.options_container{
+  display: flex;
+  justify-content: center;
+  gap:10px;
+  flex-wrap: wrap;
+}
+
+.click_options {
+  background-color: wheat;
+  border: 1px solid #293264 ;
+  border-radius: 5px;
+  padding: 6px;
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
