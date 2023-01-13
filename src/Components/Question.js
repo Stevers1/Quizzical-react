@@ -1,11 +1,7 @@
+import { useEffect } from "react";
 import "./Question.css";
 
 export default function Question(props) {
-  const object = {
-    correct: props.correct,
-    incorrect: props.incorrect,
-    isHeld: props.isHeld,
-  };
 
   function renderOptions() {
     const array = [...props.incorrect, props.correct];
@@ -19,17 +15,20 @@ export default function Question(props) {
       }
     };
 
-    shuffleArray(array);
-    return array.map((element,index) => {
+    useEffect(()=> {
+      shuffleArray(array)
+    },[])
+
+    return array.map((element, index) => {
       return (
         <div className="single_option_container">
           <input
             value={element}
             type="radio"
             id={props.id}
-            name={`nigga ${props.name}`}
+            name={`question ${props.name}`}
             className="click_options"
-            onChange={(e) => props.handleOptions(props.id, props.question)}
+            onChange={(e) => props.handleOptions(props.id, element)}
           />
           <label htmlFor={element}>{element}</label>
         </div>

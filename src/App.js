@@ -9,8 +9,7 @@ function App() {
   const he = require('he');
   const [firstLogin, setLogin] = React.useState(true)
   const [data, setData] = React.useState([])
-  const [isHeld,setIsHeld] = React.useState(false)
-  const [formQuestion, setFormQuestion] = React.useState(null)
+  const [formQuestion, setFormQuestion] = React.useState(null) //To change with options
   
   useEffect(()=>{
     fetch("https://opentdb.com/api.php?amount=5&type=multiple")
@@ -18,7 +17,14 @@ function App() {
     .then(data1 => {
       setData(data1)
       const questionsObj = data1.results.map(question => {
-        return {question: question.question, correct:question.correct_answer, isCorrect:false, id: nanoid(), incorrect:question.incorrect_answers}
+        return {
+          question: question.question, 
+          correct:question.correct_answer, 
+          isCorrect:false, 
+          id: nanoid(), 
+          incorrect:question.incorrect_answers, 
+          value:""
+        }
       })
       setFormQuestion(questionsObj)
     })
@@ -27,19 +33,17 @@ function App() {
 
   function renderQuestions() {
     if(data.results){
-      const arrayQuestions= data.results.map((el,index) => {
+      const arrayQuestions= formQuestion.map((el,index) => {
 
         const decodedQ = he.decode(el.question);
 
         return <Question 
-          key= {nanoid()}
-          id = {nanoid()}
-          wholeQ = {el}
+          key= {el.id}
+          id = {el.id}
           question = {decodedQ} 
-          incorrect ={el.incorrect_answers} 
-          correct = {el.correct_answer}
+          incorrect ={el.incorrect} 
+          correct = {el.correct}
           handleOptions ={toggleHeld}
-          isHeld = {isHeld}
           name= {index}
         />
       })
@@ -52,8 +56,15 @@ function App() {
   let quest 
 
   //For the options in question
-  function toggleHeld(id,question) {
-    
+  function toggleHeld(id,value) {
+    setFormQuestion(prevValues => {
+      return prevValues.map((el) => {
+        if(id === el.id){
+          return{...el, value:value}
+        }else return {...el}
+      })
+    })
+    console.log(formQuestion,"after")
   }
   function Login() {
 
