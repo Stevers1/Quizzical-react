@@ -10,6 +10,15 @@ function App() {
   const [firstLogin, setLogin] = React.useState(true)
   const [data, setData] = React.useState([])
   const [formQuestion, setFormQuestion] = React.useState(null) //To change with options
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+  };
   
   useEffect(()=>{
     fetch("https://opentdb.com/api.php?amount=5&type=multiple")
@@ -17,13 +26,15 @@ function App() {
     .then(data1 => {
       setData(data1)
       const questionsObj = data1.results.map(question => {
+        let allChoices = [...question.incorrect_answers, question.correct_answer]
+        shuffleArray(allChoices)
         return {
           question: question.question, 
           correct:question.correct_answer, 
           isCorrect:false, 
           id: nanoid(), 
-          incorrect:question.incorrect_answers, 
-          value:""
+          value:"",
+          allOptions: allChoices
         }
       })
       setFormQuestion(questionsObj)
@@ -45,6 +56,7 @@ function App() {
           correct = {el.correct}
           handleOptions ={toggleHeld}
           name= {index}
+          allOptions = {el.allOptions}
         />
       })
       return arrayQuestions
@@ -53,7 +65,6 @@ function App() {
     }
   }
 
-  let quest 
 
   //For the options in question
   function toggleHeld(id,value) {
@@ -80,7 +91,7 @@ function App() {
       {firstLogin && 
         <div className='intial_screen'>
           <h1 className='title'>Quizzical</h1>
-          <p>This app generates quiz questions to evaluate our knowledge made by <a href='#'>Esteban Serrano</a></p>
+          <p>This app generates quiz questions to evaluate our knowledge made by <a href='https://github.com/Stevers1'>Esteban Serrano</a></p>
           <button className="glow-on-hover" onClick={Login}>Start Quiz!</button>
         </div>
       }
