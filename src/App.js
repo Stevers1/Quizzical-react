@@ -5,6 +5,7 @@ import Question from './Components/Question';
 import { nanoid } from 'nanoid' 
 
 
+
 function App() {
   const he = require('he');
   const [firstLogin, setLogin] = React.useState(true)
@@ -65,7 +66,6 @@ function App() {
     }
   }
 
-
   //For the options in question
   function toggleHeld(id,value) {
     setFormQuestion(prevValues => {
@@ -96,8 +96,12 @@ function App() {
         </div>
       }
       {!firstLogin && 
-        renderQuestions()
+        <div className='q_container'>
+          {renderQuestions()}
+          <button class="btn draw-border">Check Answers</button>
+        </div>
       }
+      
     </main>
 
   );
