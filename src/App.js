@@ -11,6 +11,9 @@ function App() {
   const [firstLogin, setLogin] = React.useState(true)
   const [data, setData] = React.useState([])
   const [formQuestion, setFormQuestion] = React.useState(null) //To change with options
+  const [displayScore, setDispalyScore]= React.useState(0)
+  const [checkedAnswers, setCheckedAnswer]= React.useState(false)
+  const [toggleQuestions, setToggleQuestions] = React.useState(false)
 
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -40,7 +43,7 @@ function App() {
       })
       setFormQuestion(questionsObj)
     })
-  },[])
+  },[toggleQuestions])
     console.log(formQuestion);
 
   function renderQuestions() {
@@ -71,7 +74,9 @@ function App() {
     setFormQuestion(prevValues => {
       return prevValues.map((el) => {
         if(id === el.id){
-          return{...el, value:value}
+          if(value === el.correct){
+            return{...el, value:value, isCorrect:true}
+          }else return{...el, value:value,isCorrect:false}
         }else return {...el}
       })
     })
@@ -82,12 +87,48 @@ function App() {
 
     setLogin(prev => !prev)
   }
+
+  function checkAnswers() {
+    if(!checkedAnswers){
+      let countCorrect = formQuestion.reduce((acc, obj) => obj.isCorrect === true ? acc+1 : acc, 0);
+      setDispalyScore(countCorrect)
+
+      document.querySelectorAll(".question_container").forEach((element,index)=> {
+        if(formQuestion[index].isCorrect===true){
+          let correct = document.createElement("span")
+          correct.innerText="Correct";
+          correct.setAttribute("class","correct")
+          element.appendChild(correct)
+        }else {
+          let incorrect = document.createElement("span")
+          incorrect.innerText=`Incorrect the correct answer is: ${formQuestion[index].correct}`
+          incorrect.setAttribute("class","incorrect")
+          element.appendChild(incorrect)
+        }
+      })
+      let score = document.createElement("span")
+      score.innerText=`Score: ${countCorrect} out of 5`
+      score.setAttribute("class","score")
+      document.querySelector(".main").appendChild(score)
+      setCheckedAnswer(true)
+    }
+    else{
+      document.querySelectorAll(".question_container").forEach((element,index)=> {
+        let toRemove = document.querySelector("span")
+        element.removeChild(toRemove)
+      })
+      let theSpan = document.querySelector(".score")
+      document.querySelector(".main").removeChild(theSpan)
+      setToggleQuestions(prev => !prev)
+      setCheckedAnswer(false)
+    }
+  }
   
   
 
   
   return (
-    <main>
+    <main className='main'>
       {firstLogin && 
         <div className='intial_screen'>
           <h1 className='title'>Quizzical</h1>
@@ -98,7 +139,7 @@ function App() {
       {!firstLogin && 
         <div className='q_container'>
           {renderQuestions()}
-          <button class="btn draw-border">Check Answers</button>
+          <button className="btn draw-border" onClick={checkAnswers}>{checkedAnswers === true ? "New Questions" : "Check Answers"}</button>
         </div>
       }
       

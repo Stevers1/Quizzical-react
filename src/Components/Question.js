@@ -1,12 +1,7 @@
-
 import "./Question.css";
 
 export default function Question(props) {
-
-
   function renderOptions() {
-
-
     return props.allOptions.map((element, index) => {
       return (
         <div className="single_option_container">
